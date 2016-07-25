@@ -15,8 +15,8 @@ namespace gram {
 class gramLexer : public Lexer {
 public:
   enum {
-    TRUE = 1, FALSE = 2, OR = 3, AND = 4, CLOSE_PAREN = 5, OPEN_PAREN = 6, 
-    WS = 7
+    TRUE = 1, FALSE = 2, OR = 3, AND = 4, NOT = 5, CLOSE_PAREN = 6, OPEN_PAREN = 7, 
+    WS = 8
   };
 
   gramLexer(CharStream *input);

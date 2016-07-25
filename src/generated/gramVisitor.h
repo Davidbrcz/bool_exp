@@ -32,6 +32,8 @@ public:
 
     virtual T* visitTrueLit(gramParser::TrueLitContext *context) = 0;
 
+    virtual T* visitNotExpr(gramParser::NotExprContext *context) = 0;
+
     virtual T* visitParenExpr(gramParser::ParenExprContext *context) = 0;
 
     virtual T* visitOrExpr(gramParser::OrExprContext *context) = 0;

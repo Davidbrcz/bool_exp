@@ -36,6 +36,10 @@ public:
     return tree::AbstractParseTreeVisitor<T>::visitChildren(ctx);
   }
 
+  virtual T* visitNotExpr(gramParser::NotExprContext *ctx) override {
+    return tree::AbstractParseTreeVisitor<T>::visitChildren(ctx);
+  }
+
   virtual T* visitParenExpr(gramParser::ParenExprContext *ctx) override {
     return tree::AbstractParseTreeVisitor<T>::visitChildren(ctx);
   }

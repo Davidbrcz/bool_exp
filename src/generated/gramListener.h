@@ -28,6 +28,9 @@ public:
   virtual void enterTrueLit(gramParser::TrueLitContext *ctx) = 0;
   virtual void exitTrueLit(gramParser::TrueLitContext *ctx) = 0;
 
+  virtual void enterNotExpr(gramParser::NotExprContext *ctx) = 0;
+  virtual void exitNotExpr(gramParser::NotExprContext *ctx) = 0;
+
   virtual void enterParenExpr(gramParser::ParenExprContext *ctx) = 0;
   virtual void exitParenExpr(gramParser::ParenExprContext *ctx) = 0;
 

@@ -6,35 +6,51 @@
 template <class T>
 using ref_t = std::unique_ptr<T>;
 
-// template <class U,class ...T>
-// auto make_ref(T&& ...e){
-//   return std::make_unique<U>(std::forward<T>(e)...);
-// }
+
 
 struct Expr{
-   virtual ~Expr() = 0;
+  virtual ~Expr() = 0;
+  virtual std::string toString() const = 0;
 };
+
+std::ostream& operator<<(std::ostream& o,const Expr& e);
 
 struct Not : Expr{
   ref_t<Expr> e;
+
   Not(ref_t<Expr> ee);
+  Not(Not const &) = delete;
+  Not(Not&&) = default;
+
+  virtual  std::string toString() const override;
 };
 
 struct BoolLit : Expr{
   bool b;
-  BoolLit(bool bb):b(bb){}
+  BoolLit(bool bb);
+  virtual  std::string toString() const override;
 };
 
 struct And : Expr{
   ref_t<Expr> l;
   ref_t<Expr> r;
-  And(ref_t<Expr> ll,ref_t<Expr> rr):l(std::move(ll)),r(std::move(rr)){}
+
+  And(ref_t<Expr> ll,ref_t<Expr> rr);
+  And(And const &) = delete;
+  And(And&&) = default;
+
+  virtual std::string toString() const override;
 };
 
 struct Or : Expr{
   ref_t<Expr> l;
   ref_t<Expr> r;
-  Or(ref_t<Expr> ll,ref_t<Expr> rr):l(std::move(ll)),r(std::move(rr)){}
+
+  Or(ref_t<Expr> ll,ref_t<Expr> rr);
+  Or(Or const &) = delete;
+  Or(Or&&) = default;
+
+  virtual std::string toString() const override;
 };
 
 #endif /* EXPR_H */

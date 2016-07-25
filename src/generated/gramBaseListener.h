@@ -30,6 +30,9 @@ public:
   virtual void enterTrueLit(gramParser::TrueLitContext * /*ctx*/) override { }
   virtual void exitTrueLit(gramParser::TrueLitContext * /*ctx*/) override { }
 
+  virtual void enterNotExpr(gramParser::NotExprContext * /*ctx*/) override { }
+  virtual void exitNotExpr(gramParser::NotExprContext * /*ctx*/) override { }
+
   virtual void enterParenExpr(gramParser::ParenExprContext * /*ctx*/) override { }
   virtual void exitParenExpr(gramParser::ParenExprContext * /*ctx*/) override { }
 

@@ -17,8 +17,8 @@ class gramVisitor;
 class gramParser : public Parser {
 public:
   enum {
-    TRUE = 1, FALSE = 2, OR = 3, AND = 4, CLOSE_PAREN = 5, OPEN_PAREN = 6, 
-    WS = 7
+    TRUE = 1, FALSE = 2, OR = 3, AND = 4, NOT = 5, CLOSE_PAREN = 6, OPEN_PAREN = 7, 
+    WS = 8
   };
 
   enum {
@@ -122,6 +122,24 @@ public:
     T* accept(tree::ParseTreeVisitor<T> *visitor) {
       if (dynamic_cast<gramVisitor<T>*>(visitor) != nullptr)
         return ((gramVisitor<T> *)visitor)->visitTrueLit(this);
+      else
+        return visitor->visitChildren(this);
+    }
+  };
+
+  class NotExprContext : public ExprContext {
+  public:
+    NotExprContext(Ref<ExprContext> const& ctx);
+
+    Ref<tree::TerminalNode> NOT();
+    Ref<ExprContext> expr();
+    virtual void enterRule(tree::ParseTreeListener *listener) override;
+    virtual void exitRule(tree::ParseTreeListener *listener) override;
+
+    template <typename T>
+    T* accept(tree::ParseTreeVisitor<T> *visitor) {
+      if (dynamic_cast<gramVisitor<T>*>(visitor) != nullptr)
+        return ((gramVisitor<T> *)visitor)->visitNotExpr(this);
       else
         return visitor->visitChildren(this);
     }
