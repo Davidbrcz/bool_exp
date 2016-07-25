@@ -1,5 +1,5 @@
 
-// Generated from /home/david/code/bool_expr/src/gram.g4 by ANTLR 4.5.3
+// Generated from /home/david/code/bool_exp/src/gram.g4 by ANTLR 4.5.3
 
 #pragma once
 
@@ -15,7 +15,8 @@ namespace gram {
 class gramLexer : public Lexer {
 public:
   enum {
-    TRUE = 1, FALSE = 2, OR = 3, AND = 4, CLOSE_PAREN = 5, OPEN_PAREN = 6
+    TRUE = 1, FALSE = 2, OR = 3, AND = 4, CLOSE_PAREN = 5, OPEN_PAREN = 6, 
+    WS = 7
   };
 
   gramLexer(CharStream *input);

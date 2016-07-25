@@ -1,5 +1,5 @@
 
-// Generated from /home/david/code/bool_expr/src/gram.g4 by ANTLR 4.5.3
+// Generated from /home/david/code/bool_exp/src/gram.g4 by ANTLR 4.5.3
 
 
 #include "gramBaseListener.h"
@@ -31,6 +31,63 @@ dfa::Vocabulary& gramParser::getVocabulary() const {
   return _vocabulary;
 }
 
+
+//----------------- TopLevelContext ------------------------------------------------------------------
+
+gramParser::TopLevelContext::TopLevelContext(std::weak_ptr<ParserRuleContext> parent, int invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+Ref<gramParser::ExprContext> gramParser::TopLevelContext::expr() {
+  return getRuleContext<gramParser::ExprContext>(0);
+}
+
+Ref<tree::TerminalNode> gramParser::TopLevelContext::EOF() {
+  return getToken(gramParser::EOF, 0);
+}
+
+
+ssize_t gramParser::TopLevelContext::getRuleIndex() const {
+  return gramParser::RuleTopLevel;
+}
+
+void gramParser::TopLevelContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<gramListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterTopLevel(this);
+}
+
+void gramParser::TopLevelContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<gramListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitTopLevel(this);
+}
+
+
+
+Ref<gramParser::TopLevelContext> gramParser::topLevel() {
+  Ref<TopLevelContext> _localctx = std::make_shared<TopLevelContext>(_ctx, getState());
+  enterRule(_localctx, 0, gramParser::RuleTopLevel);
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(4);
+    expr(0);
+    setState(5);
+    match(gramParser::EOF);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
 
 //----------------- ExprContext ------------------------------------------------------------------
 
@@ -176,8 +233,8 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
   int parentState = getState();
   Ref<gramParser::ExprContext> _localctx = std::make_shared<ExprContext>(_ctx, parentState);
   Ref<gramParser::ExprContext> previousContext = _localctx;
-  int startState = 0;
-  enterRecursionRule(_localctx, 0, gramParser::RuleExpr, precedence);
+  int startState = 2;
+  enterRecursionRule(_localctx, 2, gramParser::RuleExpr, precedence);
 
     
 
@@ -187,7 +244,7 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
   try {
     int alt;
     enterOuterAlt(_localctx, 1);
-    setState(9);
+    setState(14);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case gramParser::TRUE: {
@@ -195,7 +252,7 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
         _ctx = _localctx;
         previousContext = _localctx;
 
-        setState(3);
+        setState(8);
         match(gramParser::TRUE);
         break;
       }
@@ -204,7 +261,7 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
         _localctx = std::make_shared<FalseLitContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
-        setState(4);
+        setState(9);
         match(gramParser::FALSE);
         break;
       }
@@ -213,11 +270,11 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
         _localctx = std::make_shared<ParenExprContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
-        setState(5);
+        setState(10);
         match(gramParser::OPEN_PAREN);
-        setState(6);
+        setState(11);
         expr(0);
-        setState(7);
+        setState(12);
         match(gramParser::CLOSE_PAREN);
         break;
       }
@@ -226,7 +283,7 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
       throw NoViableAltException(this);
     }
     _ctx->stop = _input->LT(-1);
-    setState(19);
+    setState(24);
     _errHandler->sync(this);
     alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 2, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
@@ -234,7 +291,7 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        setState(17);
+        setState(22);
         _errHandler->sync(this);
         switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 1, _ctx)) {
         case 1: {
@@ -242,12 +299,12 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
           _localctx = newContext;
           newContext->l = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(11);
+          setState(16);
 
           if (!(precpred(_ctx, 3))) throw FailedPredicateException(this, "precpred(_ctx, 3)");
-          setState(12);
+          setState(17);
           match(gramParser::AND);
-          setState(13);
+          setState(18);
           std::dynamic_pointer_cast<AndExprContext>(_localctx)->r = expr(4);
           break;
         }
@@ -257,19 +314,19 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
           _localctx = newContext;
           newContext->l = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(14);
+          setState(19);
 
           if (!(precpred(_ctx, 2))) throw FailedPredicateException(this, "precpred(_ctx, 2)");
-          setState(15);
+          setState(20);
           match(gramParser::OR);
-          setState(16);
+          setState(21);
           std::dynamic_pointer_cast<OrExprContext>(_localctx)->r = expr(3);
           break;
         }
 
         } 
       }
-      setState(21);
+      setState(26);
       _errHandler->sync(this);
       alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 2, _ctx);
     }
@@ -284,7 +341,7 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
 
 bool gramParser::sempred(Ref<RuleContext> const& context, int ruleIndex, int predicateIndex) {
   switch (ruleIndex) {
-    case 0: return exprSempred(std::dynamic_pointer_cast<ExprContext>(context), predicateIndex);
+    case 1: return exprSempred(std::dynamic_pointer_cast<ExprContext>(context), predicateIndex);
 
   default:
     break;
@@ -312,15 +369,15 @@ atn::ATN gramParser::_atn;
 std::vector<uint16_t> gramParser::_serializedATN;
 
 std::vector<std::string> gramParser::_ruleNames = {
-  "expr"
+  "topLevel", "expr"
 };
 
 std::vector<std::string> gramParser::_literalNames = {
-  "", "'tru'", "'false'", "'or'", "'and'"
+  "", "'true'", "'false'", "'or'", "'and'"
 };
 
 std::vector<std::string> gramParser::_symbolicNames = {
-  "", "TRUE", "FALSE", "OR", "AND", "CLOSE_PAREN", "OPEN_PAREN"
+  "", "TRUE", "FALSE", "OR", "AND", "CLOSE_PAREN", "OPEN_PAREN", "WS"
 };
 
 dfa::Vocabulary gramParser::_vocabulary(_literalNames, _symbolicNames);
@@ -343,22 +400,25 @@ gramParser::Initializer::Initializer() {
 
   _serializedATN = {
     0x3, 0x430, 0xd6d1, 0x8206, 0xad2d, 0x4417, 0xaef1, 0x8d80, 0xaadd, 
-    0x3, 0x8, 0x19, 0x4, 0x2, 0x9, 0x2, 0x3, 0x2, 0x3, 0x2, 0x3, 0x2, 0x3, 
-    0x2, 0x3, 0x2, 0x3, 0x2, 0x3, 0x2, 0x5, 0x2, 0xc, 0xa, 0x2, 0x3, 0x2, 
-    0x3, 0x2, 0x3, 0x2, 0x3, 0x2, 0x3, 0x2, 0x3, 0x2, 0x7, 0x2, 0x14, 0xa, 
-    0x2, 0xc, 0x2, 0xe, 0x2, 0x17, 0xb, 0x2, 0x3, 0x2, 0x2, 0x3, 0x2, 0x3, 
-    0x2, 0x2, 0x2, 0x1b, 0x2, 0xb, 0x3, 0x2, 0x2, 0x2, 0x4, 0x5, 0x8, 0x2, 
-    0x1, 0x2, 0x5, 0xc, 0x7, 0x3, 0x2, 0x2, 0x6, 0xc, 0x7, 0x4, 0x2, 0x2, 
-    0x7, 0x8, 0x7, 0x8, 0x2, 0x2, 0x8, 0x9, 0x5, 0x2, 0x2, 0x2, 0x9, 0xa, 
-    0x7, 0x7, 0x2, 0x2, 0xa, 0xc, 0x3, 0x2, 0x2, 0x2, 0xb, 0x4, 0x3, 0x2, 
-    0x2, 0x2, 0xb, 0x6, 0x3, 0x2, 0x2, 0x2, 0xb, 0x7, 0x3, 0x2, 0x2, 0x2, 
-    0xc, 0x15, 0x3, 0x2, 0x2, 0x2, 0xd, 0xe, 0xc, 0x5, 0x2, 0x2, 0xe, 0xf, 
-    0x7, 0x6, 0x2, 0x2, 0xf, 0x14, 0x5, 0x2, 0x2, 0x6, 0x10, 0x11, 0xc, 
-    0x4, 0x2, 0x2, 0x11, 0x12, 0x7, 0x5, 0x2, 0x2, 0x12, 0x14, 0x5, 0x2, 
-    0x2, 0x5, 0x13, 0xd, 0x3, 0x2, 0x2, 0x2, 0x13, 0x10, 0x3, 0x2, 0x2, 
-    0x2, 0x14, 0x17, 0x3, 0x2, 0x2, 0x2, 0x15, 0x13, 0x3, 0x2, 0x2, 0x2, 
-    0x15, 0x16, 0x3, 0x2, 0x2, 0x2, 0x16, 0x3, 0x3, 0x2, 0x2, 0x2, 0x17, 
-    0x15, 0x3, 0x2, 0x2, 0x2, 0x5, 0xb, 0x13, 0x15, 
+    0x3, 0x9, 0x1e, 0x4, 0x2, 0x9, 0x2, 0x4, 0x3, 0x9, 0x3, 0x3, 0x2, 0x3, 
+    0x2, 0x3, 0x2, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 
+    0x3, 0x3, 0x3, 0x5, 0x3, 0x11, 0xa, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 
+    0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x7, 0x3, 0x19, 0xa, 0x3, 0xc, 0x3, 0xe, 
+    0x3, 0x1c, 0xb, 0x3, 0x3, 0x3, 0x2, 0x3, 0x4, 0x4, 0x2, 0x4, 0x2, 0x2, 
+    0x1f, 0x2, 0x6, 0x3, 0x2, 0x2, 0x2, 0x4, 0x10, 0x3, 0x2, 0x2, 0x2, 0x6, 
+    0x7, 0x5, 0x4, 0x3, 0x2, 0x7, 0x8, 0x7, 0x2, 0x2, 0x3, 0x8, 0x3, 0x3, 
+    0x2, 0x2, 0x2, 0x9, 0xa, 0x8, 0x3, 0x1, 0x2, 0xa, 0x11, 0x7, 0x3, 0x2, 
+    0x2, 0xb, 0x11, 0x7, 0x4, 0x2, 0x2, 0xc, 0xd, 0x7, 0x8, 0x2, 0x2, 0xd, 
+    0xe, 0x5, 0x4, 0x3, 0x2, 0xe, 0xf, 0x7, 0x7, 0x2, 0x2, 0xf, 0x11, 0x3, 
+    0x2, 0x2, 0x2, 0x10, 0x9, 0x3, 0x2, 0x2, 0x2, 0x10, 0xb, 0x3, 0x2, 0x2, 
+    0x2, 0x10, 0xc, 0x3, 0x2, 0x2, 0x2, 0x11, 0x1a, 0x3, 0x2, 0x2, 0x2, 
+    0x12, 0x13, 0xc, 0x5, 0x2, 0x2, 0x13, 0x14, 0x7, 0x6, 0x2, 0x2, 0x14, 
+    0x19, 0x5, 0x4, 0x3, 0x6, 0x15, 0x16, 0xc, 0x4, 0x2, 0x2, 0x16, 0x17, 
+    0x7, 0x5, 0x2, 0x2, 0x17, 0x19, 0x5, 0x4, 0x3, 0x5, 0x18, 0x12, 0x3, 
+    0x2, 0x2, 0x2, 0x18, 0x15, 0x3, 0x2, 0x2, 0x2, 0x19, 0x1c, 0x3, 0x2, 
+    0x2, 0x2, 0x1a, 0x18, 0x3, 0x2, 0x2, 0x2, 0x1a, 0x1b, 0x3, 0x2, 0x2, 
+    0x2, 0x1b, 0x5, 0x3, 0x2, 0x2, 0x2, 0x1c, 0x1a, 0x3, 0x2, 0x2, 0x2, 
+    0x5, 0x10, 0x18, 0x1a, 
   };
 
   atn::ATNDeserializer deserializer;

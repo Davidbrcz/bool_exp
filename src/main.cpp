@@ -4,38 +4,15 @@
 #include "gramLexer.h"
 #include "gramParser.h"
 
-template <class T>
-using ref_t = std::reference_wrapper<T>;
-struct Expr{
-   virtual ~Expr() = 0;
-};
-
-Expr::~Expr(){}
-
-struct Not : Expr{
-  ref_t<Expr> e;
-};
-
-struct BoolLit : Expr{
-  bool b;
-};
-
-struct And : Expr{
-  ref_t<Expr> l;
-  ref_t<Expr> r;
-};
-
-struct Or : Expr{
-  ref_t<Expr> l;
-  ref_t<Expr> r;
-};
-
+#include "expr.h"
 
 using namespace gram;
 using namespace antlr4;
 
+
+
 int main(int , const char **) {
-  ANTLRInputStream input("");
+  ANTLRInputStream input("true or false");
   gramLexer lexer(&input);
   CommonTokenStream tokens(&lexer);
 
@@ -45,7 +22,7 @@ int main(int , const char **) {
   }
 
   gramParser parser(&tokens);
-  Ref<tree::ParseTree> tree = parser.expr();
+  Ref<tree::ParseTree> tree = parser.topLevel();
 
   std::cout << tree->toStringTree(&parser) << std::endl << std::endl;
 

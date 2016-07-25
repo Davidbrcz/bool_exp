@@ -1,5 +1,5 @@
 
-// Generated from /home/david/code/bool_expr/src/gram.g4 by ANTLR 4.5.3
+// Generated from /home/david/code/bool_exp/src/gram.g4 by ANTLR 4.5.3
 
 #pragma once
 
@@ -17,11 +17,12 @@ class gramVisitor;
 class gramParser : public Parser {
 public:
   enum {
-    TRUE = 1, FALSE = 2, OR = 3, AND = 4, CLOSE_PAREN = 5, OPEN_PAREN = 6
+    TRUE = 1, FALSE = 2, OR = 3, AND = 4, CLOSE_PAREN = 5, OPEN_PAREN = 6, 
+    WS = 7
   };
 
   enum {
-    RuleExpr = 0
+    RuleTopLevel = 0, RuleExpr = 1
   };
 
   gramParser(TokenStream *input);
@@ -34,7 +35,30 @@ public:
   virtual dfa::Vocabulary& getVocabulary() const override;
 
 
+  class TopLevelContext;
   class ExprContext; 
+
+  class TopLevelContext : public ParserRuleContext {
+  public:
+    TopLevelContext(std::weak_ptr<ParserRuleContext> parent, int invokingState);
+    virtual ssize_t getRuleIndex() const override;
+    Ref<ExprContext> expr();
+    Ref<tree::TerminalNode> EOF();
+
+    virtual void enterRule(tree::ParseTreeListener *listener) override;
+    virtual void exitRule(tree::ParseTreeListener *listener) override;
+
+    template <typename T>
+    T* accept(tree::ParseTreeVisitor<T> *visitor) {
+      if (dynamic_cast<gramVisitor<T>*>(visitor) != nullptr)
+        return ((gramVisitor<T> *)visitor)->visitTopLevel(this);
+      else
+        return visitor->visitChildren(this);
+    }
+   
+  };
+
+  Ref<TopLevelContext> topLevel();
 
   class ExprContext : public ParserRuleContext {
   public:

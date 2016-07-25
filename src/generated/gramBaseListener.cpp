@@ -1,5 +1,5 @@
 
-// Generated from /home/david/code/bool_expr/src/gram.g4 by ANTLR 4.5.3
+// Generated from /home/david/code/bool_exp/src/gram.g4 by ANTLR 4.5.3
 
 
 #include "gramBaseListener.h"

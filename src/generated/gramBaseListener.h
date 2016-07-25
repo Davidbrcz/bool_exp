@@ -1,5 +1,5 @@
 
-// Generated from /home/david/code/bool_expr/src/gram.g4 by ANTLR 4.5.3
+// Generated from /home/david/code/bool_exp/src/gram.g4 by ANTLR 4.5.3
 
 #pragma once
 
@@ -17,6 +17,9 @@ namespace gram {
  */
 class gramBaseListener : public gramListener {
 public:
+
+  virtual void enterTopLevel(gramParser::TopLevelContext * /*ctx*/) override { }
+  virtual void exitTopLevel(gramParser::TopLevelContext * /*ctx*/) override { }
 
   virtual void enterAndExpr(gramParser::AndExprContext * /*ctx*/) override { }
   virtual void exitAndExpr(gramParser::AndExprContext * /*ctx*/) override { }

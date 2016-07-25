@@ -1,5 +1,5 @@
 
-// Generated from /home/david/code/bool_expr/src/gram.g4 by ANTLR 4.5.3
+// Generated from /home/david/code/bool_exp/src/gram.g4 by ANTLR 4.5.3
 
 #pragma once
 
@@ -24,6 +24,8 @@ public:
   /**
    * Visit parse trees produced by gramParser.
    */
+    virtual T* visitTopLevel(gramParser::TopLevelContext *context) = 0;
+
     virtual T* visitAndExpr(gramParser::AndExprContext *context) = 0;
 
     virtual T* visitFalseLit(gramParser::FalseLitContext *context) = 0;

@@ -1,5 +1,5 @@
 
-// Generated from /home/david/code/bool_expr/src/gram.g4 by ANTLR 4.5.3
+// Generated from /home/david/code/bool_exp/src/gram.g4 by ANTLR 4.5.3
 
 #pragma once
 
@@ -19,6 +19,10 @@ namespace gram {
 template <typename T>
 class gramBaseVisitor : public tree::AbstractParseTreeVisitor<T>, public gramVisitor<T> {
 public:
+
+  virtual T* visitTopLevel(gramParser::TopLevelContext *ctx) override {
+    return tree::AbstractParseTreeVisitor<T>::visitChildren(ctx);
+  }
 
   virtual T* visitAndExpr(gramParser::AndExprContext *ctx) override {
     return tree::AbstractParseTreeVisitor<T>::visitChildren(ctx);

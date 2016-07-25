@@ -1,5 +1,9 @@
 grammar gram;
 
+topLevel :
+        expr EOF
+    ;
+
 expr :
     TRUE                          #TrueLit
     | FALSE                       #FalseLit
@@ -8,9 +12,12 @@ expr :
     | OPEN_PAREN expr CLOSE_PAREN #ParenExpr
     ;
 
-TRUE : 'tru';
+TRUE : 'true';
 FALSE : 'false';
 OR : 'or';
 AND : 'and';
 CLOSE_PAREN : ')';
 OPEN_PAREN : ')';
+
+
+WS  : [ \t\r\n]+ -> skip ;
