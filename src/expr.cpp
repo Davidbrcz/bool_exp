@@ -4,7 +4,10 @@
 #include "rewriter.h"
 
 Expr::~Expr() {}
-
+void Expr::replace(ref_t<Expr> with){
+  parent->replace(this,std::move(with));
+}
+//================================================================================
 Not::Not(ref_t<Expr> ee) : e(std::move(ee)) {
   e->parent=this;
 }
