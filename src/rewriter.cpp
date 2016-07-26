@@ -51,7 +51,11 @@ bool simplify::upon(Or &expr) const {
 bool pushNOT::upon(Not &expr) const {
   if (expr.e->what() == nature::And) {
     std::cout << "NOT AND found " << expr << "\n";
-    return !has_changed;
+    auto ptr_or = dynamic_cast<And *>(expr.e.get());
+    auto l = std::make_unique<Not>(std::move(ptr_or->l));
+    auto r = std::make_unique<Not>(std::move(ptr_or->r));
+    expr.replace(std::make_unique<Or>(std::move(l), std::move(r)));
+    return has_changed;
   }
 
   else if (expr.e->what() == nature::Or) {
