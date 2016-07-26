@@ -3,39 +3,51 @@
 
 #include "expr.h"
 
+
+const bool extern has_changed;
 struct rewriter {
-  template <class T> void accept(T& expr){
-    upon(expr);
-    expr.l->visit(*this);
-    expr.r->visit(*this);
+  template <class T> void accept(T &expr) {
+    auto backup = expr.parent;
+    if (upon(expr) == has_changed) {
+      backup->visit(*this);
+    }else{
+      expr.l->visit(*this);
+      expr.r->visit(*this);
+    }
+
   }
-  void accept(Not& expr){
-    upon(expr);
-    expr.e->visit(*this);
+  void accept(Not &expr) {
+    auto backup = expr.parent;
+    if (upon(expr) == has_changed) {
+      backup->visit(*this);
+    }else {
+      expr.e->visit(*this);
+    }
   }
+
 protected:
-  virtual void upon(Not &e) const = 0;
-  virtual void upon(And &e) const = 0;
-  virtual void upon(Or &e) const = 0;
+  virtual bool upon(Not &e) const = 0;
+  virtual bool upon(And &e) const = 0;
+  virtual bool upon(Or &e) const = 0;
 };
 
-struct default_rewriter : rewriter{
+struct default_rewriter : rewriter {
 protected:
-  virtual void upon(Not &e) const override;
-  virtual void upon(And &e) const override;
-  virtual void upon(Or &e) const override;
+  virtual bool upon(Not &e) const override;
+  virtual bool upon(And &e) const override;
+  virtual bool upon(Or &e) const override;
 };
 
-struct pushNOT : default_rewriter{
+struct pushNOT : default_rewriter {
 protected:
-  virtual void upon(Not &e) const override;
+  virtual bool upon(Not &e) const override;
 };
 
-struct simplify : default_rewriter{
+struct simplify : default_rewriter {
 protected:
-  virtual void upon(Not &e) const override;
-  virtual void upon(And &e) const override;
-  virtual void upon(Or &e) const override;
+  virtual bool upon(Not &e) const override;
+  virtual bool upon(And &e) const override;
+  virtual bool upon(Or &e) const override;
 };
 
 #endif /* REWRITER_H */

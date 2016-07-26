@@ -21,9 +21,14 @@ int main(int , const char **) {
   Listener l;
   walker.walk(&l,tree);
   auto e = std::move(l.s.top());
+
   std::cout << *e << "\n";
   pushNOT r;
   e->visit(r);
-  
+  std::cout << *e << "\n";
+  std::cout << "============" << "\n";
+  simplify s;
+  e->visit(s);
+  std::cout << *e << "\n";
   return 0;
 }
