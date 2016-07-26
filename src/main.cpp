@@ -6,22 +6,15 @@
 
 #include "expr.h"
 #include "listener.h"
-
+#include "rewriter.h"
 using namespace gram;
 using namespace antlr4;
 
-
-
 int main(int , const char **) {
-  ANTLRInputStream input("(true or false) and (true or false) or not(not(true))");
+  ANTLRInputStream input("(true or false) and (false or true) and true or not(not(true))");
+
   gramLexer lexer(&input);
-  CommonTokenStream tokens(&lexer);
-
-  tokens.fill();
-  for (auto token : tokens.getTokens()) {
-    std::cout << token->toString() << std::endl;
-  }
-
+  CommonTokenStream tokens(&lexer);  
   gramParser parser(&tokens);
   Ref<tree::ParseTree> tree = parser.topLevel();
   tree::ParseTreeWalker walker;
@@ -29,5 +22,8 @@ int main(int , const char **) {
   walker.walk(&l,tree);
   auto e = std::move(l.s.top());
   std::cout << *e << "\n";
+  pushNOT r;
+  e->visit(r);
+  
   return 0;
 }

@@ -33,7 +33,7 @@ include_directories(generated)
 include_directories(/usr/local/include)
 
 link_directories(/usr/local/lib/)
-add_executable(bool_expr main.cpp listener.cpp expr.cpp
+add_executable(bool_expr main.cpp listener.cpp expr.cpp rewriter.cpp
   ${PROJECT_SOURCE_DIR}/generated/gramLexer.cpp
   ${PROJECT_SOURCE_DIR}/generated/gramParser.cpp
   ${PROJECT_SOURCE_DIR}/generated/gramBaseListener.cpp
