@@ -23,29 +23,30 @@ bool simplify::upon(Not &expr) const {
   return !has_changed;
 }
 bool simplify::upon(And &expr) const {
-  auto and_lit = [&expr](Expr &e) {
-    auto nat_l = e.what();
-    if (nat_l == nature::LitT || nat_l == nature::LitF) {
-      std::cout << "And LIT found" << expr << "\n";
-      return !has_changed;
-    }
-    return !has_changed;
-  };
-  bool r = and_lit(*expr.l) || and_lit(*expr.r);
-  return r;
+
+  if (expr.l->what() == nature::LitF) {
+    std::cout << "And LIT L found " << expr << "\n";
+    expr.replace(std::make_unique<BoolLit>(false));
+    return has_changed;
+  } else if (expr.r->what() == nature::LitF) {
+    std::cout << "And LIT R found " << expr << "\n";
+    expr.replace(std::make_unique<BoolLit>(false));
+    return has_changed;
+  }
+  return !has_changed;
 }
 bool simplify::upon(Or &expr) const {
 
-  auto or_lit = [&expr](Expr &e) {
-    auto nat_l = e.what();
-    if (nat_l == nature::LitT || nat_l == nature::LitF) {
-      std::cout << "Or LIT found " << expr << "\n";
-      return !has_changed;
-    }
-    return !has_changed;
-  };
-  bool r = or_lit(*expr.l) || or_lit(*expr.r);
-  return r;
+  if (expr.l->what() == nature::LitT) {
+    std::cout << "Or LIT L found " << expr << "\n";
+    expr.replace(std::make_unique<BoolLit>(true));
+    return has_changed;
+  } else if (expr.r->what() == nature::LitT) {
+    std::cout << "Or LIT R found " << expr << "\n";
+    expr.replace(std::make_unique<BoolLit>(true));
+    return has_changed;
+  }
+  return !has_changed;
 }
 //================================================================================
 bool pushNOT::upon(Not &expr) const {
