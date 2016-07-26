@@ -6,7 +6,7 @@
 class rewriter;
 template <class T> using ref_t = std::unique_ptr<T>;
 
-enum class nature { Not, LitT,LitF, And, Or };
+enum class nature { Not, LitT,LitF, And, Or , Top};
 
 struct Expr {
   Expr* parent = nullptr;
@@ -19,6 +19,15 @@ struct Expr {
 };
 
 std::ostream &operator<<(std::ostream &o, const Expr &e);
+
+struct Top : Expr{
+  ref_t<Expr> e;
+  Top(ref_t<Expr> ee);
+  virtual std::string toString() const override;
+  virtual void visit(rewriter &r) override;
+  virtual nature what() const override;
+  virtual void replace(Expr* what,ref_t<Expr> with) override;
+};
 
 struct Not : Expr {
   ref_t<Expr> e;

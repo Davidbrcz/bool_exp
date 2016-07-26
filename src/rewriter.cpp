@@ -62,7 +62,10 @@ bool pushNOT::upon(Not &expr) const {
 
   else if (expr.e->what() == nature::Not) {
     std::cout << "Double NOT found " << expr << "\n";
-    return !has_changed;
+    auto ptr = dynamic_cast<Not*>(expr.e.get());
+    std::cout << "PRT-E "<< *ptr->e << "\n";
+    expr.parent->replace(&expr,std::move(ptr->e));
+    return has_changed;
   }
 
   return !has_changed;

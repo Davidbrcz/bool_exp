@@ -90,3 +90,12 @@ void Or::replace(Expr* what,ref_t<Expr> with) {
     std::cout << "ERROR OR" << *what << " by "<< *with   << "\n";
   }
 }
+
+Top::Top(ref_t<Expr> ee):e(std::move(ee)){e->parent=this;}
+std::string Top::toString() const {return e->toString();}
+void Top::visit(rewriter &r) {e->visit(r);}
+nature Top::what() const {return nature::Top;}
+void Top::replace(Expr* what,ref_t<Expr> with) {
+  e=std::move(with);
+}
+

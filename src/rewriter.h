@@ -7,20 +7,13 @@
 const bool extern has_changed;
 struct rewriter {
   template <class T> void accept(T &expr) {
-    auto backup = expr.parent;
-    if (upon(expr) == has_changed) {
-      backup->visit(*this);
-    }else{
+    if (upon(expr) == ! has_changed) {
       expr.l->visit(*this);
       expr.r->visit(*this);
     }
-
   }
   void accept(Not &expr) {
-    auto backup = expr.parent;
-    if (upon(expr) == has_changed) {
-      backup->visit(*this);
-    }else {
+    if (upon(expr) == !has_changed) {
       expr.e->visit(*this);
     }
   }
