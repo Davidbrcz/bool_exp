@@ -11,32 +11,28 @@
 namespace gram {
 
 /**
- * This template class defines an abstract visitor for a parse tree
+ * This class defines an abstract visitor for a parse tree
  * produced by gramParser.
- *
- * @param <T> The return type of the visit operation. Use void for
- * operations with no return type.
  */
-template <typename T>
-class gramVisitor : public antlr4::tree::ParseTreeVisitor<T> {
+class gramVisitor : public antlr4::tree::AbstractParseTreeVisitor {
 public:
 
   /**
    * Visit parse trees produced by gramParser.
    */
-    virtual T* visitTopLevel(gramParser::TopLevelContext *context) = 0;
+    virtual antlrcpp::Any visitTopLevel(gramParser::TopLevelContext *context) = 0;
 
-    virtual T* visitAndExpr(gramParser::AndExprContext *context) = 0;
+    virtual antlrcpp::Any visitAndExpr(gramParser::AndExprContext *context) = 0;
 
-    virtual T* visitFalseLit(gramParser::FalseLitContext *context) = 0;
+    virtual antlrcpp::Any visitFalseLit(gramParser::FalseLitContext *context) = 0;
 
-    virtual T* visitTrueLit(gramParser::TrueLitContext *context) = 0;
+    virtual antlrcpp::Any visitTrueLit(gramParser::TrueLitContext *context) = 0;
 
-    virtual T* visitNotExpr(gramParser::NotExprContext *context) = 0;
+    virtual antlrcpp::Any visitNotExpr(gramParser::NotExprContext *context) = 0;
 
-    virtual T* visitParenExpr(gramParser::ParenExprContext *context) = 0;
+    virtual antlrcpp::Any visitParenExpr(gramParser::ParenExprContext *context) = 0;
 
-    virtual T* visitOrExpr(gramParser::OrExprContext *context) = 0;
+    virtual antlrcpp::Any visitOrExpr(gramParser::OrExprContext *context) = 0;
 
 
 };

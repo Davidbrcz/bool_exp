@@ -13,39 +13,36 @@ namespace gram {
 /**
  * This class provides an empty implementation of gramVisitor, which can be
  * extended to create a visitor which only needs to handle a subset of the available methods.
- *
- * @param <T> The return type of the visit operation. Use void for operations with no return type.
  */
-template <typename T>
-class gramBaseVisitor : public tree::AbstractParseTreeVisitor<T>, public gramVisitor<T> {
+class gramBaseVisitor : public gramVisitor {
 public:
 
-  virtual T* visitTopLevel(gramParser::TopLevelContext *ctx) override {
-    return tree::AbstractParseTreeVisitor<T>::visitChildren(ctx);
+  virtual antlrcpp::Any visitTopLevel(gramParser::TopLevelContext *ctx) override {
+    return visitChildren(ctx);
   }
 
-  virtual T* visitAndExpr(gramParser::AndExprContext *ctx) override {
-    return tree::AbstractParseTreeVisitor<T>::visitChildren(ctx);
+  virtual antlrcpp::Any visitAndExpr(gramParser::AndExprContext *ctx) override {
+    return visitChildren(ctx);
   }
 
-  virtual T* visitFalseLit(gramParser::FalseLitContext *ctx) override {
-    return tree::AbstractParseTreeVisitor<T>::visitChildren(ctx);
+  virtual antlrcpp::Any visitFalseLit(gramParser::FalseLitContext *ctx) override {
+    return visitChildren(ctx);
   }
 
-  virtual T* visitTrueLit(gramParser::TrueLitContext *ctx) override {
-    return tree::AbstractParseTreeVisitor<T>::visitChildren(ctx);
+  virtual antlrcpp::Any visitTrueLit(gramParser::TrueLitContext *ctx) override {
+    return visitChildren(ctx);
   }
 
-  virtual T* visitNotExpr(gramParser::NotExprContext *ctx) override {
-    return tree::AbstractParseTreeVisitor<T>::visitChildren(ctx);
+  virtual antlrcpp::Any visitNotExpr(gramParser::NotExprContext *ctx) override {
+    return visitChildren(ctx);
   }
 
-  virtual T* visitParenExpr(gramParser::ParenExprContext *ctx) override {
-    return tree::AbstractParseTreeVisitor<T>::visitChildren(ctx);
+  virtual antlrcpp::Any visitParenExpr(gramParser::ParenExprContext *ctx) override {
+    return visitChildren(ctx);
   }
 
-  virtual T* visitOrExpr(gramParser::OrExprContext *ctx) override {
-    return tree::AbstractParseTreeVisitor<T>::visitChildren(ctx);
+  virtual antlrcpp::Any visitOrExpr(gramParser::OrExprContext *ctx) override {
+    return visitChildren(ctx);
   }
 
 

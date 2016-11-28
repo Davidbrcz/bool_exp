@@ -16,7 +16,7 @@ void test(std::string str){
   gramLexer lexer(&input);
   CommonTokenStream tokens(&lexer);  
   gramParser parser(&tokens);
-  Ref<tree::ParseTree> tree = parser.topLevel();
+  auto tree = parser.topLevel();
   tree::ParseTreeWalker walker;
   Listener l;
   walker.walk(&l,tree);

@@ -2,7 +2,8 @@
 // Generated from /home/david/code/bool_expr/src/gram.g4 by ANTLR 4.5.3
 
 
-#include "gramBaseListener.h"
+#include "gramListener.h"
+#include "gramVisitor.h"
 
 #include "gramParser.h"
 
@@ -34,20 +35,20 @@ dfa::Vocabulary& gramParser::getVocabulary() const {
 
 //----------------- TopLevelContext ------------------------------------------------------------------
 
-gramParser::TopLevelContext::TopLevelContext(std::weak_ptr<ParserRuleContext> parent, int invokingState)
+gramParser::TopLevelContext::TopLevelContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-Ref<gramParser::ExprContext> gramParser::TopLevelContext::expr() {
+gramParser::ExprContext* gramParser::TopLevelContext::expr() {
   return getRuleContext<gramParser::ExprContext>(0);
 }
 
-Ref<tree::TerminalNode> gramParser::TopLevelContext::EOF() {
+tree::TerminalNode* gramParser::TopLevelContext::EOF() {
   return getToken(gramParser::EOF, 0);
 }
 
 
-ssize_t gramParser::TopLevelContext::getRuleIndex() const {
+size_t gramParser::TopLevelContext::getRuleIndex() const {
   return gramParser::RuleTopLevel;
 }
 
@@ -64,9 +65,15 @@ void gramParser::TopLevelContext::exitRule(tree::ParseTreeListener *listener) {
 }
 
 
+antlrcpp::Any gramParser::TopLevelContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (dynamic_cast<gramVisitor*>(visitor) != nullptr)
+    return ((gramVisitor *)visitor)->visitTopLevel(this);
+  else
+    return visitor->visitChildren(this);
+}
 
-Ref<gramParser::TopLevelContext> gramParser::topLevel() {
-  Ref<TopLevelContext> _localctx = std::make_shared<TopLevelContext>(_ctx, getState());
+gramParser::TopLevelContext* gramParser::topLevel() {
+  TopLevelContext *_localctx = _tracker.createInstance<TopLevelContext>(_ctx, getState());
   enterRule(_localctx, 0, gramParser::RuleTopLevel);
 
   auto onExit = finally([=] {
@@ -91,34 +98,34 @@ Ref<gramParser::TopLevelContext> gramParser::topLevel() {
 
 //----------------- ExprContext ------------------------------------------------------------------
 
-gramParser::ExprContext::ExprContext(std::weak_ptr<ParserRuleContext> parent, int invokingState)
+gramParser::ExprContext::ExprContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
 
-ssize_t gramParser::ExprContext::getRuleIndex() const {
+size_t gramParser::ExprContext::getRuleIndex() const {
   return gramParser::RuleExpr;
 }
 
-void gramParser::ExprContext::copyFrom(Ref<ExprContext> const& ctx) {
+void gramParser::ExprContext::copyFrom(ExprContext *ctx) {
   ParserRuleContext::copyFrom(ctx);
 }
 
 //----------------- AndExprContext ------------------------------------------------------------------
 
-Ref<tree::TerminalNode> gramParser::AndExprContext::AND() {
+tree::TerminalNode* gramParser::AndExprContext::AND() {
   return getToken(gramParser::AND, 0);
 }
 
-std::vector<Ref<gramParser::ExprContext>> gramParser::AndExprContext::expr() {
+std::vector<gramParser::ExprContext *> gramParser::AndExprContext::expr() {
   return getRuleContexts<gramParser::ExprContext>();
 }
 
-Ref<gramParser::ExprContext> gramParser::AndExprContext::expr(int i) {
-  return getRuleContext<gramParser::ExprContext>((size_t)i);
+gramParser::ExprContext* gramParser::AndExprContext::expr(size_t i) {
+  return getRuleContext<gramParser::ExprContext>(i);
 }
 
-gramParser::AndExprContext::AndExprContext(Ref<ExprContext> const& ctx) { copyFrom(ctx); }
+gramParser::AndExprContext::AndExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
 void gramParser::AndExprContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<gramListener *>(listener);
@@ -131,13 +138,19 @@ void gramParser::AndExprContext::exitRule(tree::ParseTreeListener *listener) {
     parserListener->exitAndExpr(this);
 }
 
+antlrcpp::Any gramParser::AndExprContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (dynamic_cast<gramVisitor*>(visitor) != nullptr)
+    return ((gramVisitor *)visitor)->visitAndExpr(this);
+  else
+    return visitor->visitChildren(this);
+}
 //----------------- FalseLitContext ------------------------------------------------------------------
 
-Ref<tree::TerminalNode> gramParser::FalseLitContext::FALSE() {
+tree::TerminalNode* gramParser::FalseLitContext::FALSE() {
   return getToken(gramParser::FALSE, 0);
 }
 
-gramParser::FalseLitContext::FalseLitContext(Ref<ExprContext> const& ctx) { copyFrom(ctx); }
+gramParser::FalseLitContext::FalseLitContext(ExprContext *ctx) { copyFrom(ctx); }
 
 void gramParser::FalseLitContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<gramListener *>(listener);
@@ -150,13 +163,19 @@ void gramParser::FalseLitContext::exitRule(tree::ParseTreeListener *listener) {
     parserListener->exitFalseLit(this);
 }
 
+antlrcpp::Any gramParser::FalseLitContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (dynamic_cast<gramVisitor*>(visitor) != nullptr)
+    return ((gramVisitor *)visitor)->visitFalseLit(this);
+  else
+    return visitor->visitChildren(this);
+}
 //----------------- TrueLitContext ------------------------------------------------------------------
 
-Ref<tree::TerminalNode> gramParser::TrueLitContext::TRUE() {
+tree::TerminalNode* gramParser::TrueLitContext::TRUE() {
   return getToken(gramParser::TRUE, 0);
 }
 
-gramParser::TrueLitContext::TrueLitContext(Ref<ExprContext> const& ctx) { copyFrom(ctx); }
+gramParser::TrueLitContext::TrueLitContext(ExprContext *ctx) { copyFrom(ctx); }
 
 void gramParser::TrueLitContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<gramListener *>(listener);
@@ -169,17 +188,23 @@ void gramParser::TrueLitContext::exitRule(tree::ParseTreeListener *listener) {
     parserListener->exitTrueLit(this);
 }
 
+antlrcpp::Any gramParser::TrueLitContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (dynamic_cast<gramVisitor*>(visitor) != nullptr)
+    return ((gramVisitor *)visitor)->visitTrueLit(this);
+  else
+    return visitor->visitChildren(this);
+}
 //----------------- NotExprContext ------------------------------------------------------------------
 
-Ref<tree::TerminalNode> gramParser::NotExprContext::NOT() {
+tree::TerminalNode* gramParser::NotExprContext::NOT() {
   return getToken(gramParser::NOT, 0);
 }
 
-Ref<gramParser::ExprContext> gramParser::NotExprContext::expr() {
+gramParser::ExprContext* gramParser::NotExprContext::expr() {
   return getRuleContext<gramParser::ExprContext>(0);
 }
 
-gramParser::NotExprContext::NotExprContext(Ref<ExprContext> const& ctx) { copyFrom(ctx); }
+gramParser::NotExprContext::NotExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
 void gramParser::NotExprContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<gramListener *>(listener);
@@ -192,21 +217,27 @@ void gramParser::NotExprContext::exitRule(tree::ParseTreeListener *listener) {
     parserListener->exitNotExpr(this);
 }
 
+antlrcpp::Any gramParser::NotExprContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (dynamic_cast<gramVisitor*>(visitor) != nullptr)
+    return ((gramVisitor *)visitor)->visitNotExpr(this);
+  else
+    return visitor->visitChildren(this);
+}
 //----------------- ParenExprContext ------------------------------------------------------------------
 
-Ref<tree::TerminalNode> gramParser::ParenExprContext::OPEN_PAREN() {
+tree::TerminalNode* gramParser::ParenExprContext::OPEN_PAREN() {
   return getToken(gramParser::OPEN_PAREN, 0);
 }
 
-Ref<gramParser::ExprContext> gramParser::ParenExprContext::expr() {
+gramParser::ExprContext* gramParser::ParenExprContext::expr() {
   return getRuleContext<gramParser::ExprContext>(0);
 }
 
-Ref<tree::TerminalNode> gramParser::ParenExprContext::CLOSE_PAREN() {
+tree::TerminalNode* gramParser::ParenExprContext::CLOSE_PAREN() {
   return getToken(gramParser::CLOSE_PAREN, 0);
 }
 
-gramParser::ParenExprContext::ParenExprContext(Ref<ExprContext> const& ctx) { copyFrom(ctx); }
+gramParser::ParenExprContext::ParenExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
 void gramParser::ParenExprContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<gramListener *>(listener);
@@ -219,21 +250,27 @@ void gramParser::ParenExprContext::exitRule(tree::ParseTreeListener *listener) {
     parserListener->exitParenExpr(this);
 }
 
+antlrcpp::Any gramParser::ParenExprContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (dynamic_cast<gramVisitor*>(visitor) != nullptr)
+    return ((gramVisitor *)visitor)->visitParenExpr(this);
+  else
+    return visitor->visitChildren(this);
+}
 //----------------- OrExprContext ------------------------------------------------------------------
 
-Ref<tree::TerminalNode> gramParser::OrExprContext::OR() {
+tree::TerminalNode* gramParser::OrExprContext::OR() {
   return getToken(gramParser::OR, 0);
 }
 
-std::vector<Ref<gramParser::ExprContext>> gramParser::OrExprContext::expr() {
+std::vector<gramParser::ExprContext *> gramParser::OrExprContext::expr() {
   return getRuleContexts<gramParser::ExprContext>();
 }
 
-Ref<gramParser::ExprContext> gramParser::OrExprContext::expr(int i) {
-  return getRuleContext<gramParser::ExprContext>((size_t)i);
+gramParser::ExprContext* gramParser::OrExprContext::expr(size_t i) {
+  return getRuleContext<gramParser::ExprContext>(i);
 }
 
-gramParser::OrExprContext::OrExprContext(Ref<ExprContext> const& ctx) { copyFrom(ctx); }
+gramParser::OrExprContext::OrExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
 void gramParser::OrExprContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<gramListener *>(listener);
@@ -246,17 +283,23 @@ void gramParser::OrExprContext::exitRule(tree::ParseTreeListener *listener) {
     parserListener->exitOrExpr(this);
 }
 
+antlrcpp::Any gramParser::OrExprContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (dynamic_cast<gramVisitor*>(visitor) != nullptr)
+    return ((gramVisitor *)visitor)->visitOrExpr(this);
+  else
+    return visitor->visitChildren(this);
+}
 
-Ref<gramParser::ExprContext> gramParser::expr() {
+gramParser::ExprContext* gramParser::expr() {
    return expr(0);
 }
 
-Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
-  Ref<ParserRuleContext> parentContext = _ctx;
-  int parentState = getState();
-  Ref<gramParser::ExprContext> _localctx = std::make_shared<ExprContext>(_ctx, parentState);
-  Ref<gramParser::ExprContext> previousContext = _localctx;
-  int startState = 2;
+gramParser::ExprContext* gramParser::expr(int precedence) {
+  ParserRuleContext *parentContext = _ctx;
+  size_t parentState = getState();
+  gramParser::ExprContext *_localctx = _tracker.createInstance<ExprContext>(_ctx, parentState);
+  gramParser::ExprContext *previousContext = _localctx;
+  size_t startState = 2;
   enterRecursionRule(_localctx, 2, gramParser::RuleExpr, precedence);
 
     
@@ -265,13 +308,13 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
     unrollRecursionContexts(parentContext);
   });
   try {
-    int alt;
+    size_t alt;
     enterOuterAlt(_localctx, 1);
     setState(16);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case gramParser::TRUE: {
-        _localctx = std::make_shared<TrueLitContext>(_localctx);
+        _localctx = _tracker.createInstance<TrueLitContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
 
@@ -281,7 +324,7 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
       }
 
       case gramParser::FALSE: {
-        _localctx = std::make_shared<FalseLitContext>(_localctx);
+        _localctx = _tracker.createInstance<FalseLitContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
         setState(9);
@@ -290,7 +333,7 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
       }
 
       case gramParser::NOT: {
-        _localctx = std::make_shared<NotExprContext>(_localctx);
+        _localctx = _tracker.createInstance<NotExprContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
         setState(10);
@@ -301,7 +344,7 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
       }
 
       case gramParser::OPEN_PAREN: {
-        _localctx = std::make_shared<ParenExprContext>(_localctx);
+        _localctx = _tracker.createInstance<ParenExprContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
         setState(12);
@@ -329,7 +372,7 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
         _errHandler->sync(this);
         switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 1, _ctx)) {
         case 1: {
-          auto newContext = std::make_shared<AndExprContext>(std::make_shared<ExprContext>(parentContext, parentState));
+          auto newContext = _tracker.createInstance<AndExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           newContext->l = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
@@ -339,12 +382,12 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
           setState(19);
           match(gramParser::AND);
           setState(20);
-          std::dynamic_pointer_cast<AndExprContext>(_localctx)->r = expr(4);
+          dynamic_cast<AndExprContext *>(_localctx)->r = expr(4);
           break;
         }
 
         case 2: {
-          auto newContext = std::make_shared<OrExprContext>(std::make_shared<ExprContext>(parentContext, parentState));
+          auto newContext = _tracker.createInstance<OrExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           newContext->l = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
@@ -354,7 +397,7 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
           setState(22);
           match(gramParser::OR);
           setState(23);
-          std::dynamic_pointer_cast<OrExprContext>(_localctx)->r = expr(3);
+          dynamic_cast<OrExprContext *>(_localctx)->r = expr(3);
           break;
         }
 
@@ -373,9 +416,9 @@ Ref<gramParser::ExprContext> gramParser::expr(int precedence) {
   return _localctx;
 }
 
-bool gramParser::sempred(Ref<RuleContext> const& context, int ruleIndex, int predicateIndex) {
+bool gramParser::sempred(RuleContext *context, size_t ruleIndex, size_t predicateIndex) {
   switch (ruleIndex) {
-    case 1: return exprSempred(std::dynamic_pointer_cast<ExprContext>(context), predicateIndex);
+    case 1: return exprSempred(dynamic_cast<ExprContext *>(context), predicateIndex);
 
   default:
     break;
@@ -383,7 +426,7 @@ bool gramParser::sempred(Ref<RuleContext> const& context, int ruleIndex, int pre
   return true;
 }
 
-bool gramParser::exprSempred(Ref<ExprContext> const& _localctx, int predicateIndex) {
+bool gramParser::exprSempred(ExprContext *_localctx, size_t predicateIndex) {
   switch (predicateIndex) {
     case 0: return precpred(_ctx, 3);
     case 1: return precpred(_ctx, 2);
@@ -460,8 +503,10 @@ gramParser::Initializer::Initializer() {
   atn::ATNDeserializer deserializer;
   _atn = deserializer.deserialize(_serializedATN);
 
-  for (int i = 0; i < _atn.getNumberOfDecisions(); i++) { 
-    _decisionToDFA.push_back(dfa::DFA(_atn.getDecisionState(i), i));
+  size_t count = _atn.getNumberOfDecisions();
+  _decisionToDFA.reserve(count);
+  for (size_t i = 0; i < count; i++) { 
+    _decisionToDFA.emplace_back(_atn.getDecisionState(i), i);
   }
 }
 

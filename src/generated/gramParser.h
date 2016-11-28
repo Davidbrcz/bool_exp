@@ -11,8 +11,6 @@ using namespace antlr4;
 
 namespace gram {
 
-template <typename T>
-class gramVisitor;
 
 class gramParser : public Parser {
 public:
@@ -40,156 +38,115 @@ public:
 
   class TopLevelContext : public ParserRuleContext {
   public:
-    TopLevelContext(std::weak_ptr<ParserRuleContext> parent, int invokingState);
-    virtual ssize_t getRuleIndex() const override;
-    Ref<ExprContext> expr();
-    Ref<tree::TerminalNode> EOF();
+    TopLevelContext(ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ExprContext *expr();
+    tree::TerminalNode *EOF();
 
     virtual void enterRule(tree::ParseTreeListener *listener) override;
     virtual void exitRule(tree::ParseTreeListener *listener) override;
 
-    template <typename T>
-    T* accept(tree::ParseTreeVisitor<T> *visitor) {
-      if (dynamic_cast<gramVisitor<T>*>(visitor) != nullptr)
-        return ((gramVisitor<T> *)visitor)->visitTopLevel(this);
-      else
-        return visitor->visitChildren(this);
-    }
+    virtual antlrcpp::Any accept(tree::ParseTreeVisitor *visitor) override;
    
   };
 
-  Ref<TopLevelContext> topLevel();
+  TopLevelContext* topLevel();
 
   class ExprContext : public ParserRuleContext {
   public:
-    ExprContext(std::weak_ptr<ParserRuleContext> parent, int invokingState);
+    ExprContext(ParserRuleContext *parent, size_t invokingState);
    
-    ExprContext() { }
-    void copyFrom(Ref<ExprContext> const& context);
+    ExprContext() : ParserRuleContext() { }
+    void copyFrom(ExprContext *context);
+    using ParserRuleContext::copyFrom;
 
-    virtual ssize_t getRuleIndex() const override;
+    virtual size_t getRuleIndex() const override;
 
    
   };
 
   class AndExprContext : public ExprContext {
   public:
-    AndExprContext(Ref<ExprContext> const& ctx);
+    AndExprContext(ExprContext *ctx);
 
-    Ref<gramParser::ExprContext> l;
-    Ref<gramParser::ExprContext> r;
-    Ref<tree::TerminalNode> AND();
-    std::vector<Ref<ExprContext>> expr();
-    Ref<ExprContext> expr(int i);
+    gramParser::ExprContext *l = nullptr;
+    gramParser::ExprContext *r = nullptr;
+    tree::TerminalNode *AND();
+    std::vector<ExprContext *> expr();
+    ExprContext* expr(size_t i);
     virtual void enterRule(tree::ParseTreeListener *listener) override;
     virtual void exitRule(tree::ParseTreeListener *listener) override;
 
-    template <typename T>
-    T* accept(tree::ParseTreeVisitor<T> *visitor) {
-      if (dynamic_cast<gramVisitor<T>*>(visitor) != nullptr)
-        return ((gramVisitor<T> *)visitor)->visitAndExpr(this);
-      else
-        return visitor->visitChildren(this);
-    }
+    virtual antlrcpp::Any accept(tree::ParseTreeVisitor *visitor) override;
   };
 
   class FalseLitContext : public ExprContext {
   public:
-    FalseLitContext(Ref<ExprContext> const& ctx);
+    FalseLitContext(ExprContext *ctx);
 
-    Ref<tree::TerminalNode> FALSE();
+    tree::TerminalNode *FALSE();
     virtual void enterRule(tree::ParseTreeListener *listener) override;
     virtual void exitRule(tree::ParseTreeListener *listener) override;
 
-    template <typename T>
-    T* accept(tree::ParseTreeVisitor<T> *visitor) {
-      if (dynamic_cast<gramVisitor<T>*>(visitor) != nullptr)
-        return ((gramVisitor<T> *)visitor)->visitFalseLit(this);
-      else
-        return visitor->visitChildren(this);
-    }
+    virtual antlrcpp::Any accept(tree::ParseTreeVisitor *visitor) override;
   };
 
   class TrueLitContext : public ExprContext {
   public:
-    TrueLitContext(Ref<ExprContext> const& ctx);
+    TrueLitContext(ExprContext *ctx);
 
-    Ref<tree::TerminalNode> TRUE();
+    tree::TerminalNode *TRUE();
     virtual void enterRule(tree::ParseTreeListener *listener) override;
     virtual void exitRule(tree::ParseTreeListener *listener) override;
 
-    template <typename T>
-    T* accept(tree::ParseTreeVisitor<T> *visitor) {
-      if (dynamic_cast<gramVisitor<T>*>(visitor) != nullptr)
-        return ((gramVisitor<T> *)visitor)->visitTrueLit(this);
-      else
-        return visitor->visitChildren(this);
-    }
+    virtual antlrcpp::Any accept(tree::ParseTreeVisitor *visitor) override;
   };
 
   class NotExprContext : public ExprContext {
   public:
-    NotExprContext(Ref<ExprContext> const& ctx);
+    NotExprContext(ExprContext *ctx);
 
-    Ref<tree::TerminalNode> NOT();
-    Ref<ExprContext> expr();
+    tree::TerminalNode *NOT();
+    ExprContext *expr();
     virtual void enterRule(tree::ParseTreeListener *listener) override;
     virtual void exitRule(tree::ParseTreeListener *listener) override;
 
-    template <typename T>
-    T* accept(tree::ParseTreeVisitor<T> *visitor) {
-      if (dynamic_cast<gramVisitor<T>*>(visitor) != nullptr)
-        return ((gramVisitor<T> *)visitor)->visitNotExpr(this);
-      else
-        return visitor->visitChildren(this);
-    }
+    virtual antlrcpp::Any accept(tree::ParseTreeVisitor *visitor) override;
   };
 
   class ParenExprContext : public ExprContext {
   public:
-    ParenExprContext(Ref<ExprContext> const& ctx);
+    ParenExprContext(ExprContext *ctx);
 
-    Ref<tree::TerminalNode> OPEN_PAREN();
-    Ref<ExprContext> expr();
-    Ref<tree::TerminalNode> CLOSE_PAREN();
+    tree::TerminalNode *OPEN_PAREN();
+    ExprContext *expr();
+    tree::TerminalNode *CLOSE_PAREN();
     virtual void enterRule(tree::ParseTreeListener *listener) override;
     virtual void exitRule(tree::ParseTreeListener *listener) override;
 
-    template <typename T>
-    T* accept(tree::ParseTreeVisitor<T> *visitor) {
-      if (dynamic_cast<gramVisitor<T>*>(visitor) != nullptr)
-        return ((gramVisitor<T> *)visitor)->visitParenExpr(this);
-      else
-        return visitor->visitChildren(this);
-    }
+    virtual antlrcpp::Any accept(tree::ParseTreeVisitor *visitor) override;
   };
 
   class OrExprContext : public ExprContext {
   public:
-    OrExprContext(Ref<ExprContext> const& ctx);
+    OrExprContext(ExprContext *ctx);
 
-    Ref<gramParser::ExprContext> l;
-    Ref<gramParser::ExprContext> r;
-    Ref<tree::TerminalNode> OR();
-    std::vector<Ref<ExprContext>> expr();
-    Ref<ExprContext> expr(int i);
+    gramParser::ExprContext *l = nullptr;
+    gramParser::ExprContext *r = nullptr;
+    tree::TerminalNode *OR();
+    std::vector<ExprContext *> expr();
+    ExprContext* expr(size_t i);
     virtual void enterRule(tree::ParseTreeListener *listener) override;
     virtual void exitRule(tree::ParseTreeListener *listener) override;
 
-    template <typename T>
-    T* accept(tree::ParseTreeVisitor<T> *visitor) {
-      if (dynamic_cast<gramVisitor<T>*>(visitor) != nullptr)
-        return ((gramVisitor<T> *)visitor)->visitOrExpr(this);
-      else
-        return visitor->visitChildren(this);
-    }
+    virtual antlrcpp::Any accept(tree::ParseTreeVisitor *visitor) override;
   };
 
-  Ref<ExprContext> expr();
-  Ref<ExprContext> expr(int precedence);
+  ExprContext* expr();
+  ExprContext* expr(int precedence);
 
-  virtual bool sempred(Ref<RuleContext> const& _localctx, int ruleIndex, int predicateIndex) override;
-  bool exprSempred(Ref<ExprContext> const& _localctx, int predicateIndex);
+  virtual bool sempred(RuleContext *_localctx, size_t ruleIndex, size_t predicateIndex) override;
+  bool exprSempred(ExprContext *_localctx, size_t predicateIndex);
 
 private:
   static std::vector<dfa::DFA> _decisionToDFA;
