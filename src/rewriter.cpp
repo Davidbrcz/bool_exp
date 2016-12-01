@@ -62,8 +62,19 @@ optional<ref_t<AST::Expr>> Try::operator()(ref_t<AST::Expr> expr) {
 // Try(Sequence(S, Repeat(S)))
 optional<ref_t<AST::Expr>> Repeat::operator()(ref_t<AST::Expr> expr) {
   // cerr << "REPEAT" << std::endl;
-  auto self = [this](ref_t<AST::Expr> arg) { return (*this)(arg); };
-  return try_(sequence_(s, self))(expr);
+  // auto self = [this](ref_t<AST::Expr> arg) { return (*this)(arg); };
+  // return try_(sequence_(s, self))(expr);
+  
+  auto fixed_point = [this](ref_t<AST::Expr> arg) {
+    auto last = arg;
+    auto r = s(last);
+    while(r){
+      last = *r;
+      r = s(last);
+    }
+    return optional<ref_t<AST::Expr>>{last};
+  };
+  return fixed_point(expr);
 }
 
 optional<ref_t<AST::Expr>> All::operator()(ref_t<AST::Expr> expr) {
