@@ -92,11 +92,11 @@ void test(std::string str){
   std::cerr << *e << std::endl;
 
   using namespace Rewrite;
-  cerr << "BEGIN\n" << std::endl;
+  cerr << "BEGIN" << std::endl;
   auto strat = outermost_(choice_(&PushNot, &simplify));
 
   if (auto r = strat(e); r) {
-    cerr << **r << std::endl;
+    cerr << "RESULT "<<**r <<"\n"<< std::endl;
   }
   
 }
