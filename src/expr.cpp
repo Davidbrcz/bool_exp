@@ -1,104 +1,63 @@
 #include "expr.h"
-#include <sstream>
+
 #include <iostream>
-#include "rewriter.h"
+#include <sstream>
+#include <algorithm>
+#include <type_traits>
 
+
+namespace AST {
+
+Expr::Expr(Expr *p, nature nn) : parent(p), n(nn) {}
+nature Expr::what() const { return n; };
 Expr::~Expr() {}
-void Expr::replace(ref_t<Expr> with){
-  parent->replace(this,std::move(with));
+
+Not::Not(ref_t<Expr> ee) : Expr{this, nature::Not}, e(ee) {}
+std::string Not::toString() const override {
+  return "!("s + e->toString() + ")";
 }
-//================================================================================
-Not::Not(ref_t<Expr> ee) : e(std::move(ee)) {
-  e->parent=this;
+std::vector<ref_t<Expr>> Not::children() const override { return {e}; }
+ref_t<Expr> Not::clone(std::vector<ref_t<Expr>> args) const override {
+  return std::make_shared<Not>(args[0]);
 }
 
-BoolLit::BoolLit(bool bb) : b(bb) {}
+BoolLit::BoolLit(bool bb)
+    : Expr{this, bb ? nature::LitT : nature::LitF}, b(bb) {}
 
-And::And(ref_t<Expr> ll, ref_t<Expr> rr) : l(std::move(ll)), r(std::move(rr)) {
-  l->parent=this;
-  r->parent=this;
-}
-
-Or::Or(ref_t<Expr> ll, ref_t<Expr> rr) : l(std::move(ll)), r(std::move(rr)) {
-  l->parent=this;
-  r->parent=this;
-}
-//================================================================================
-std::string Or::toString() const {
-  return std::string{"("} + l->toString() + "||" + r->toString() + ")";
-}
-std::string And::toString() const {
-  return std::string{"("} + l->toString() + "&&" + r->toString() + ")";
-}
-std::string BoolLit::toString() const {
+std::string BoolLit::toString() const override {
   std::ostringstream os;
   os << b;
   return os.str();
 }
-
-std::string Not::toString() const {
-  return std::string{"!("} + e->toString() + ")";
-}
-//================================================================================
-void Or::visit(rewriter &r) { r.accept(*this); }
-void And::visit(rewriter &r) { r.accept(*this); }
-void BoolLit::visit(rewriter &) {
-  // Nothing to do
+std::vector<ref_t<Expr>> BoolLit::children() const override { return {}; }
+ref_t<Expr> BoolLit::clone(std::vector<ref_t<Expr>> args) const override {
+  return std::make_shared<BoolLit>(b);
 }
 
-void Not::visit(rewriter &r) { r.accept(*this); }
-//================================================================================
-nature Or::what() const { return nature::Or; }
-nature And::what() const { return nature::And; }
-nature BoolLit::what() const {
-  if (b) {
-    return nature::LitT;
-  } else {
-    return nature::LitF;
-  }
+And::And(ref_t<Expr> ll, ref_t<Expr> rr)
+    : Expr{this, nature::And}, l((ll)), r((rr)) {}
+
+std::string And::toString() const override {
+  return std::string{"("} + l->toString() + "&&" + r->toString() + ")";
+}
+std::vector<ref_t<Expr>> And::children() const override { return {l, r}; }
+ref_t<Expr> And::clone(std::vector<ref_t<Expr>> args) const override {
+  return std::make_shared<And>(args[0], args[1]);
 }
 
-nature Not::what() const { return nature::Not; }
+Or::Or(ref_t<Expr> ll, ref_t<Expr> rr)
+    : Expr{this, nature::Or}, l((ll)), r((rr)) {}
+std::string Or::toString() const override {
+  return "("s + l->toString() + "||" + r->toString() + ")";
+}
+std::vector<ref_t<Expr>> Or::children() const override { return {l, r}; }
+ref_t<Expr> Or::clone(std::vector<ref_t<Expr>> args) const override {
+  return std::make_shared<Or>(args[0], args[1]);
+}
+
 //================================================================================
 std::ostream &operator<<(std::ostream &o, const Expr &e) {
   o << e.toString();
   return o;
 }
-//================================================================================
-void Not::replace(Expr* ,ref_t<Expr> with) {
-  with->parent = this;
-  e=std::move(with);
 }
-void BoolLit::replace(Expr* ,ref_t<Expr> with) {
-  std::cout << "SHOULD NOT HAPPEN" << "\n";
-}
-void And::replace(Expr* what,ref_t<Expr> with) {
-  with->parent = this;
-  if(l.get()==what){
-    l=std::move(with);
-  }else if(r.get()==what){
-    r=std::move(with);
-  }else{
-    std::cout << "ERROR AND"  << "\n";
-  }
-}
-
-void Or::replace(Expr* what,ref_t<Expr> with) {
-  with->parent = this;
-  if(l.get()==what){
-    l=std::move(with);
-  }else if(r.get()==what){
-    r=std::move(with);
-  }else{
-    std::cout << "ERROR OR" << *what << " by "<< *with   << "\n";
-  }
-}
-
-Top::Top(ref_t<Expr> ee):e(std::move(ee)){e->parent=this;}
-std::string Top::toString() const {return e->toString();}
-void Top::visit(rewriter &r) {e->visit(r);}
-nature Top::what() const {return nature::Top;}
-void Top::replace(Expr* what,ref_t<Expr> with) {
-  e=std::move(with);
-}
-

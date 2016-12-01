@@ -1,18 +1,9 @@
-#include <iostream>
 
-#include "antlr4-runtime.h"
-#include "gramLexer.h"
-#include "gramParser.h"
 
-#include "expr.h"
-#include "listener.h"
-#include "rewriter.h"
-using namespace gram;
-using namespace antlr4;
-using namespace std;
 
-template <class T> optional<ref_t<AST::Expr>> some(T e) {
-  return optional<ref_t<AST::Expr>>(e);
+
+template <class T> optional<AST::ref_t<AST::Expr>> some(T e) {
+  return optional<AST::ref_t<AST::Expr>>(e);
 }
 
 #define try_downcast(name, T, expr)                                            \
@@ -23,10 +14,10 @@ template <class T> optional<ref_t<AST::Expr>> some(T e) {
   if (auto(name) = std::dynamic_pointer_cast<T>((expr));                       \
       static_cast<bool>((name)) && (cond))
 
-// #define try_downcast2(name, T, expr)                                           
+// #define try_downcast2(name, T, expr)                                           \
 //   if (auto name = dynamic_cast<T const *>(&(expr)); static_cast<bool>(name))
 
-optional<ref_t<AST::Expr>> PushNot(ref_t<AST::Expr> const &e) {
+optional<AST::ref_t<AST::Expr>> PushNot(AST::ref_t<AST::Expr> const &e) {
   using namespace AST;
   try_downcast(notE, AST::Not, e) {
     try_downcast(subOr, AST::Or, notE->e) {
@@ -44,7 +35,7 @@ optional<ref_t<AST::Expr>> PushNot(ref_t<AST::Expr> const &e) {
   return boost::none;
 }
 
-optional<ref_t<AST::Expr>> simplify(ref_t<AST::Expr> const &e) {
+optional<AST::ref_t<AST::Expr>> simplify(AST::ref_t<AST::Expr> const &e) {
   using namespace AST;
 
   try_downcast(andE, AST::And, e) {
@@ -77,33 +68,24 @@ optional<ref_t<AST::Expr>> simplify(ref_t<AST::Expr> const &e) {
   return boost::none;
 }
 
+int main(int argc, char *argv[]) {
+  using namespace AST;
 
-void test(std::string str){
-  ANTLRInputStream input(str);
-  gramLexer lexer(&input);
-  CommonTokenStream tokens(&lexer);  
-  gramParser parser(&tokens);
-  auto tree = parser.topLevel();
-  tree::ParseTreeWalker walker;
-  Listener l;
-  walker.walk(&l,tree);
-  auto e = std::move(l.s.top());
+  auto t = make_shared<Not>(make_shared<And>(
+      make_shared<Not>(make_shared<BoolLit>(true)),
+      make_shared<Or>(make_shared<BoolLit>(true),
+                      make_shared<Not>(make_shared<BoolLit>(false)))));
 
-  std::cerr << *e << std::endl;
+  cerr << *t << std::endl;
 
   using namespace Rewrite;
-  cerr << "BEGIN\n" << std::endl;
+  cerr << "BEGIN"
+       << "\n\n";
   auto strat = outermost_(choice_(&PushNot, &simplify));
 
-  if (auto r = strat(e); r) {
+  if (auto r = strat(t); r) {
     cerr << **r << std::endl;
   }
-  
-}
 
-int main(int , const char **) {
-  test("(true or false) and (false or true) and true or not(not(true))");
-  test("not(true or false)");
-  test("not(true and false)");
   return 0;
 }

@@ -1,89 +1,64 @@
 #ifndef EXPR_H
 #define EXPR_H
 
+#include <boost/optional/optional.hpp>
+#include <iosfwd>
 #include <memory>
+#include <vector>
 
-class rewriter;
-template <class T> using ref_t = std::unique_ptr<T>;
+template <class T> using optional = boost::optional<T>;
+template <class T> using ref_t = std::shared_ptr<T>;
 
-enum class nature { Not, LitT, LitF, And, Or, Top };
+namespace AST {
+
+enum class nature { Not, LitT, LitF, And, Or };
 
 struct Expr {
   Expr *parent = nullptr;
-
   virtual ~Expr() = 0;
+  Expr(Expr *p, nature nn);
   virtual std::string toString() const = 0;
-  virtual void visit(rewriter &r) = 0;
-  virtual nature what() const = 0;
-
-  void replace(ref_t<Expr> with);
-
-protected:
-  virtual void replace(Expr *what, ref_t<Expr> with) = 0;
+  nature what() const;
+  const nature n;
+  virtual std::vector<ref_t<Expr>> children() const = 0;
+  virtual ref_t<Expr> clone(std::vector<ref_t<Expr>> args) const = 0;
 };
 
 std::ostream &operator<<(std::ostream &o, const Expr &e);
-
-struct Top : Expr {
-  ref_t<Expr> e;
-  Top(ref_t<Expr> ee);
-  using Expr::replace;
-  virtual std::string toString() const override;
-  virtual void visit(rewriter &r) override;
-  virtual nature what() const override;
-
-protected:
-  virtual void replace(Expr *what, ref_t<Expr> with) override;
-};
-
 struct Not : Expr {
   ref_t<Expr> e;
-  using Expr::replace;
   Not(ref_t<Expr> ee);
-  virtual std::string toString() const override;
-  virtual void visit(rewriter &r) override;
-  virtual nature what() const override;
-
-protected:
-  virtual void replace(Expr *what, ref_t<Expr> with) override;
+  std::string toString() const override;
+  std::vector<ref_t<Expr>> children() const override;
+  ref_t<Expr> clone(std::vector<ref_t<Expr>> args) const override;
 };
 
 struct BoolLit : Expr {
   bool b;
-  using Expr::replace;
   BoolLit(bool bb);
-  virtual std::string toString() const override;
-  virtual void visit(rewriter &r) override;
-  virtual nature what() const override;
-
-protected:
-  virtual void replace(Expr *what, ref_t<Expr> with) override;
+  std::string toString() const override;
+  std::vector<ref_t<Expr>> children() const override;
+  ref_t<Expr> clone(std::vector<ref_t<Expr>> args) const override;
 };
 
 struct And : Expr {
   ref_t<Expr> l;
   ref_t<Expr> r;
-  using Expr::replace;
   And(ref_t<Expr> ll, ref_t<Expr> rr);
-  virtual std::string toString() const override;
-  virtual void visit(rewriter &r) override;
-  virtual nature what() const override;
 
-protected:
-  virtual void replace(Expr *what, ref_t<Expr> with) override;
+  std::string toString() const override;
+  std::vector<ref_t<Expr>> children() const override;
+  ref_t<Expr> clone(std::vector<ref_t<Expr>> args) const override;
 };
 
 struct Or : Expr {
   ref_t<Expr> l;
   ref_t<Expr> r;
-  using Expr::replace;
   Or(ref_t<Expr> ll, ref_t<Expr> rr);
-  virtual std::string toString() const override;
-  virtual void visit(rewriter &r) override;
-  virtual nature what() const override;
-
-protected:
-  virtual void replace(Expr *what, ref_t<Expr> with) override;
+  std::string toString() const override;
+  std::vector<ref_t<Expr>> children() const override;
+  ref_t<Expr> clone(std::vector<ref_t<Expr>> args) const override;
 };
+}
 
 #endif /* EXPR_H */

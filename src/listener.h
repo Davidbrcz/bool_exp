@@ -2,13 +2,12 @@
 #define LISTENER_H
 
 #include "gramBaseListener.h"
-
 #include "expr.h"
 
 class Listener : public gram::gramBaseListener {
 
 public:
-  std::stack<std::unique_ptr<Expr>> s;
+  std::stack<ref_t<AST::Expr>> s;
   
   virtual void exitTopLevel(gram::gramParser::TopLevelContext * /*ctx*/) override;
   virtual void exitAndExpr(gram::gramParser::AndExprContext * /*ctx*/) override;

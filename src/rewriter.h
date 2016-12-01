@@ -3,44 +3,105 @@
 
 #include "expr.h"
 
+namespace Rewrite {
 
-const bool extern has_changed;
-struct rewriter {
-  template <class T> void accept(T &expr) {
-    if (upon(expr) == ! has_changed) {
-      expr.l->visit(*this);
-      expr.r->visit(*this);
-    }
-  }
-  void accept(Not &expr) {
-    if (upon(expr) == !has_changed) {
-      expr.e->visit(*this);
-    }
-  }
+using Strat =
+    std::function<optional<ref_t<AST::Expr>>(ref_t<AST::Expr> const &)>;
 
-protected:
-  virtual bool upon(Not &e) const = 0;
-  virtual bool upon(And &e) const = 0;
-  virtual bool upon(Or &e) const = 0;
+optional<ref_t<AST::Expr>> Identity(ref_t<AST::Expr> const &e);
+
+struct Sequence {
+  Strat s1;
+  Strat s2;
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
 };
 
-struct default_rewriter : rewriter {
-protected:
-  virtual bool upon(Not &e) const override;
-  virtual bool upon(And &e) const override;
-  virtual bool upon(Or &e) const override;
+auto sequence_(Strat s1, Strat s2);
+
+struct Choice {
+  Strat s1;
+  Strat s2;
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr) const;
 };
 
-struct pushNOT : default_rewriter {
-protected:
-  virtual bool upon(Not &e) const override;
+auto choice_(Strat s1, Strat s2);
+
+struct Not {
+  Strat s1;
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
+};
+auto not_(Strat s1);
+
+struct Try {
+  Strat s;
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
 };
 
-struct simplify : default_rewriter {
-protected:
-  virtual bool upon(Not &e) const override;
-  virtual bool upon(And &e) const override;
-  virtual bool upon(Or &e) const override;
+auto try_(Strat s1);
+
+struct Repeat {
+  Strat s;
+
+  // Try(Sequence(S, Repeat(S)))
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
 };
+auto repeat_(Strat s1);
+
+struct All {
+  Strat s;
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+};
+
+auto all_(Strat s1);
+
+struct One {
+  Strat s;
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+};
+auto one_(Strat s1);
+
+// BottomUp(S) = Sequence(All(BottomUp(S)), S)
+struct BottomUp {
+  Strat s;
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+};
+
+auto bottomUp_(Strat s1);
+
+// TopDown(S) = Sequence(S, All(TopDown(S)))
+struct TopDown {
+
+  Strat s;
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+};
+auto topDown_(Strat s1);
+
+// OnceBottomUp(S) = Choice(One(OnceBottomUp(S)), S)
+struct OnceBottomUp {
+  Strat s;
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+};
+auto onceBottomUp_(Strat s1);
+//  OnceTopDown(S)  = Choice(S, One(OnceTopDown(S)))
+struct OnceTopDown {
+  Strat s;
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+};
+auto onceTopDown_(Strat s1);
+// Innermost(S) = Repeat(OnceBottomUp(S))
+struct Innermost {
+  Strat s;
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+};
+auto innermost_(Strat s1);
+
+//  Outermost(S)    = Repeat(OnceTopDown(S))
+struct Outermost {
+
+  Strat s;
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+};
+auto outermost_(Strat s1);
+}
 
 #endif /* REWRITER_H */
