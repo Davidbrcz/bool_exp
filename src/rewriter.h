@@ -10,123 +10,96 @@ using Strat =
 
 optional<ref_t<AST::Expr>> Identity(ref_t<AST::Expr> const &e);
 
-struct Sequence {
+struct TwoArgStep {
+protected:
   Strat s1;
   Strat s2;
-  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr) const;
+  ~TwoArgStep() = default;
+
+public:
+  TwoArgStep(Strat ss1, Strat ss2);
 };
 
-struct Choice {
-  Strat s1;
-  Strat s2;
-  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr) const;
+struct OneArgStep {
+protected:
+  Strat s;
+  ~OneArgStep() = default;
+
+public:
+  OneArgStep(Strat ss1);
 };
 
-struct Not {
-  Strat s1;
+struct Sequence : TwoArgStep {
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr) const;
+  using TwoArgStep::TwoArgStep;
+};
+
+struct Choice : TwoArgStep {
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr) const;
+  using TwoArgStep::TwoArgStep;
+};
+
+struct Not : OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
+  using OneArgStep::OneArgStep;
 };
 
-struct Try {
-  Strat s;
+struct Try : OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+  using OneArgStep::OneArgStep;
 };
 
-struct Repeat {
-  Strat s;
-
-  // Try(Sequence(S, Repeat(S)))
+// Try(Sequence(S, Repeat(S)))
+struct Repeat : OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+  using OneArgStep::OneArgStep;
 };
 
-struct All {
-  Strat s;
+struct All : OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+  using OneArgStep::OneArgStep;
 };
 
-struct One {
-  Strat s;
+struct One : OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+  using OneArgStep::OneArgStep;
 };
 
 // BottomUp(S) = Sequence(All(BottomUp(S)), S)
-struct BottomUp {
-  Strat s;
+struct BottomUp : OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+  using OneArgStep::OneArgStep;
 };
 
 // TopDown(S) = Sequence(S, All(TopDown(S)))
-struct TopDown {
-  Strat s;
+struct TopDown : OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+  using OneArgStep::OneArgStep;
 };
 
 // OnceBottomUp(S) = Choice(One(OnceBottomUp(S)), S)
-struct OnceBottomUp {
-  Strat s;
+struct OnceBottomUp : OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+  using OneArgStep::OneArgStep;
 };
 
 //  OnceTopDown(S)  = Choice(S, One(OnceTopDown(S)))
-struct OnceTopDown {
-  Strat s;
+struct OnceTopDown : OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+  using OneArgStep::OneArgStep;
 };
 
 // Innermost(S) = Repeat(OnceBottomUp(S))
-struct Innermost {
-  Strat s;
+struct Innermost : OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+  using OneArgStep::OneArgStep;
 };
 
 //  Outermost(S)    = Repeat(OnceTopDown(S))
-struct Outermost {
-
-  Strat s;
+struct Outermost : OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+  using OneArgStep::OneArgStep;
 };
-
-namespace {
-auto const sequence_ = [](Strat s1, Strat s2) {
-  return std::bind(&Sequence::operator(), Sequence{s1, s2}, _1);
-};
-auto const choice_ = [](Strat s1, Strat s2) {
-  return std::bind(&Choice::operator(), Choice{s1, s2}, _1);
-};
-auto const not_ = [](Strat s1) {
-  return std::bind(&Not::operator(), Not{s1}, _1);
-};
-auto const try_ = [](Strat s1) {
-  return std::bind(&Try::operator(), Try{s1}, _1);
-};
-auto const repeat_ = [](Strat s1) {
-  return std::bind(&Repeat::operator(), Repeat{s1}, _1);
-};
-auto const all_ = [](Strat s1) {
-  return std::bind(&All::operator(), All{s1}, _1);
-};
-auto const one_ = [](Strat s1) {
-  return std::bind(&One::operator(), One{s1}, _1);
-};
-auto const bottomUp_ = [](Strat s1) {
-  return std::bind(&BottomUp::operator(), BottomUp{s1}, _1);
-};
-auto const topDown_ = [](Strat s1) {
-  return std::bind(&TopDown::operator(), TopDown{s1}, _1);
-};
-auto const onceBottomUp_ = [](Strat s1) {
-  return std::bind(&OnceBottomUp::operator(), OnceBottomUp{s1}, _1);
-};
-auto const onceTopDown_ = [](Strat s1) {
-  return std::bind(&OnceTopDown::operator(), OnceTopDown{s1}, _1);
-};
-auto const innermost_ = [](Strat s1) {
-  return std::bind(&Innermost::operator(), Innermost{s1}, _1);
-};
-auto const outermost_ = [](Strat s1) {
-  return std::bind(&Outermost::operator(), Outermost{s1}, _1);
-};
-}
 }
 
 #endif /* REWRITER_H */

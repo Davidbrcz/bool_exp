@@ -93,7 +93,7 @@ void test(std::string str){
 
   using namespace Rewrite;
   cerr << "BEGIN" << std::endl;
-  auto strat = outermost_(choice_(&PushNot, &simplify));
+  auto strat = Outermost(Choice(&PushNot, &simplify));
 
   if (auto r = strat(e); r) {
     cerr << "RESULT "<<**r <<"\n"<< std::endl;
