@@ -40,13 +40,15 @@ optional<ref_t<AST::Expr>> PushNot(ref_t<AST::Expr> const &e) {
                                   make_shared<Not>(subAnd->r)));
     }
   }
-  // cerr << "failed" << std::endl;
+  //cerr << "failed pushnot" << std::endl;
   return boost::none;
 }
 
 optional<ref_t<AST::Expr>> simplify(ref_t<AST::Expr> const &e) {
   using namespace AST;
 
+  // false && ...
+  // ... && false 
   try_downcast(andE, AST::And, e) {
     try_downcastCond(lit, AST::BoolLit, andE->l, lit->what() == nature::LitF) {
       return some(make_shared<AST::BoolLit>(false));
@@ -56,7 +58,8 @@ optional<ref_t<AST::Expr>> simplify(ref_t<AST::Expr> const &e) {
       return some(make_shared<AST::BoolLit>(false));
     }
   }
-
+  // true ||  ...
+  //  ... || true
   try_downcast(orE, AST::Or, e) {
     try_downcastCond(lit, AST::BoolLit, orE->l, lit->what() == nature::LitT) {
       return some(make_shared<AST::BoolLit>(true));
@@ -67,13 +70,31 @@ optional<ref_t<AST::Expr>> simplify(ref_t<AST::Expr> const &e) {
     }
   }
 
+  // !!e
   try_downcast(notE, AST::Not, e) {
     try_downcast(lit, AST::BoolLit, notE->e) {
       return some(make_shared<AST::BoolLit>(!lit->b));
     }
   }
 
-  // cerr << "failed" << std::endl;
+  // a && b
+  try_downcast(andE, AST::And, e) {
+    try_downcast(litL, AST::BoolLit, andE->l) {
+      try_downcast(litR, AST::BoolLit, andE->r) {
+	return some(make_shared<AST::BoolLit>(litR->b && litL->b));
+      }     
+    }    
+  }
+  // a || b
+  try_downcast(orE, AST::Or, e) {
+    try_downcast(litL, AST::BoolLit, orE->l) {
+      try_downcast(litR, AST::BoolLit, orE->r) {
+	return some(make_shared<AST::BoolLit>(litR->b || litL->b));
+      }     
+    }    
+  }
+  
+  //cerr << "failed simplify" << std::endl;
   return boost::none;
 }
 
@@ -89,20 +110,20 @@ void test(std::string str){
   walker.walk(&l,tree);
   auto e = std::move(l.s.top());
 
-  std::cerr << *e << std::endl;
+  cout << *e << std::endl;
 
   using namespace Rewrite;
-  cerr << "BEGIN" << std::endl;
-  auto strat = Outermost(Choice(&PushNot, &simplify));
+  cout << "BEGIN" << std::endl;
+  auto strat = Innermost(Choice("MYTRY",&PushNot, &simplify));
 
   if (auto r = strat(e); r) {
-    cerr << "RESULT "<<**r <<"\n"<< std::endl;
+    cout << "RESULT "<<**r <<"\n"<< std::endl;
   }
   
 }
 
 int main(int , const char **) {
-  test("(true or false) and (false or true) and true or not(not(true))");
+  test("(true or false) and (false or true) and (true or not(not(true)))");
   test("not(true or false)");
   test("not(true and false)");
   return 0;

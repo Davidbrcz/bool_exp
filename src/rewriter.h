@@ -29,75 +29,81 @@ public:
   OneArgStep(Strat ss1);
 };
 
-struct Sequence : TwoArgStep {
+struct Sequence : private TwoArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr) const;
   using TwoArgStep::TwoArgStep;
 };
 
-struct Choice : TwoArgStep {
+struct Choice : private TwoArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr) const;
   using TwoArgStep::TwoArgStep;
+  Choice(std::string s,Strat s1,Strat s2);
+  std::string msg;
 };
 
-struct Not : OneArgStep {
+struct Not : private OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
   using OneArgStep::OneArgStep;
 };
 
-struct Try : OneArgStep {
-  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+struct Try : private OneArgStep {
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
   using OneArgStep::OneArgStep;
 };
 
 // Try(Sequence(S, Repeat(S)))
-struct Repeat : OneArgStep {
-  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+struct Repeat : private OneArgStep {
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
   using OneArgStep::OneArgStep;
 };
 
-struct All : OneArgStep {
-  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+struct All : private OneArgStep {
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
   using OneArgStep::OneArgStep;
 };
 
-struct One : OneArgStep {
-  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+struct One : private OneArgStep {
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
   using OneArgStep::OneArgStep;
 };
 
 // BottomUp(S) = Sequence(All(BottomUp(S)), S)
-struct BottomUp : OneArgStep {
-  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+struct BottomUp : private OneArgStep {
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
   using OneArgStep::OneArgStep;
 };
 
 // TopDown(S) = Sequence(S, All(TopDown(S)))
-struct TopDown : OneArgStep {
-  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+struct TopDown : private OneArgStep {
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
   using OneArgStep::OneArgStep;
 };
 
 // OnceBottomUp(S) = Choice(One(OnceBottomUp(S)), S)
-struct OnceBottomUp : OneArgStep {
-  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
-  using OneArgStep::OneArgStep;
+  struct OnceBottomUp //: private OneArgStep
+{
+  Strat s;
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
+  //  using OneArgStep::OneArgStep;
 };
 
 //  OnceTopDown(S)  = Choice(S, One(OnceTopDown(S)))
-struct OnceTopDown : OneArgStep {
-  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
-  using OneArgStep::OneArgStep;
+  struct OnceTopDown //: private OneArgStep
+{
+  Strat s;
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
+  //using OneArgStep::OneArgStep;
 };
 
 // Innermost(S) = Repeat(OnceBottomUp(S))
-struct Innermost : OneArgStep {
-  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+struct Innermost : private OneArgStep {
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
   using OneArgStep::OneArgStep;
 };
 
 //  Outermost(S)    = Repeat(OnceTopDown(S))
-struct Outermost : OneArgStep {
-  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> expr);
+struct Outermost : private OneArgStep {
+  optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
   using OneArgStep::OneArgStep;
 };
 }

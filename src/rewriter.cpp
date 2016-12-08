@@ -26,15 +26,16 @@ operator()(ref_t<AST::Expr> const &expr) const {
     return boost::none;
   }
 }
-
+Choice::Choice(std::string s, Strat s1, Strat s2)
+    : TwoArgStep(s1, s2), msg(s) {}
 optional<ref_t<AST::Expr>> Choice::
 operator()(ref_t<AST::Expr> const &expr) const {
-  // cerr << "CHOICE on " << *expr << std::endl;
+  // cerr << msg << " CHOICE on " << *expr << std::endl;
   if (auto r1 = s1(expr); static_cast<bool>(r1) == true) {
     // cerr << "s1 OK" << std::endl;
     return r1;
   } else {
-    // cout << "s1 failed" << std::endl;
+    // cerr << "s1 failed" << std::endl;
     auto r2 = s2(expr);
     if (auto r2 = s2(expr); static_cast<bool>(r2) == true) {
       // cerr << "s2 OK" << std::endl;
@@ -56,30 +57,30 @@ optional<ref_t<AST::Expr>> Not::operator()(ref_t<AST::Expr> const &expr) {
   }
 }
 
-optional<ref_t<AST::Expr>> Try::operator()(ref_t<AST::Expr> expr) {
+optional<ref_t<AST::Expr>> Try::operator()(ref_t<AST::Expr> const& expr) {
   // cerr << "TRY" << std::endl;
   return Choice(s, &Identity)(expr);
 }
 
 // Try(Sequence(S, Repeat(S)))
-optional<ref_t<AST::Expr>> Repeat::operator()(ref_t<AST::Expr> expr) {
+optional<ref_t<AST::Expr>> Repeat::operator()(ref_t<AST::Expr> const& expr) {
   // cerr << "REPEAT" << std::endl;
-  // auto self = [this](ref_t<AST::Expr> arg) { return (*this)(arg); };
-  // return try_(Sequence(s, self))(expr);
+  auto self = [this](ref_t<AST::Expr> arg) { return (*this)(arg); };
+  return Try(Sequence(s, self))(expr);
 
-  auto fixed_point = [this](ref_t<AST::Expr> arg) {
-    auto last = arg;
-    auto r = s(last);
-    while (r) {
-      last = *r;
-      r = s(last);
-    }
-    return optional<ref_t<AST::Expr>>{last};
-  };
-  return fixed_point(expr);
+  // auto fixed_point = [this](ref_t<AST::Expr> arg) {
+  //   auto last = arg;
+  //   auto r = s(last);
+  //   while (r) {
+  //     last = *r;
+  //     r = s(last);
+  //   }
+  //   return optional<ref_t<AST::Expr>>{last};
+  // };
+  // return fixed_point(expr);
 }
 
-optional<ref_t<AST::Expr>> All::operator()(ref_t<AST::Expr> expr) {
+optional<ref_t<AST::Expr>> All::operator()(ref_t<AST::Expr> const& expr) {
   // cerr << "ALL" << std::endl;
   auto children = expr->children();
   std::vector<optional<ref_t<AST::Expr>>> args;
@@ -98,11 +99,11 @@ optional<ref_t<AST::Expr>> All::operator()(ref_t<AST::Expr> expr) {
   }
 }
 
-optional<ref_t<AST::Expr>> One::operator()(ref_t<AST::Expr> expr) {
+optional<ref_t<AST::Expr>> One::operator()(ref_t<AST::Expr> const& expr) {
   // cerr << "ONE ON " << *expr << std::endl;
   auto children = expr->children();
   std::vector<optional<ref_t<AST::Expr>>> args;
-  // cout << "SIZE " << children.size() << "\n";
+  // cerr << "SIZE " << children.size() << "\n";
   for (auto e : children) {
     // cerr << "## " << *e << std::endl;
   }
@@ -127,7 +128,7 @@ optional<ref_t<AST::Expr>> One::operator()(ref_t<AST::Expr> expr) {
 }
 
 // BottomUp(S) = Sequence(All(BottomUp(S)), S)
-optional<ref_t<AST::Expr>> BottomUp::operator()(ref_t<AST::Expr> expr) {
+optional<ref_t<AST::Expr>> BottomUp::operator()(ref_t<AST::Expr> const& expr) {
   // cerr << "BOTTOMUP" << std::endl;
   auto self = [this](ref_t<AST::Expr> arg) { return (*this)(arg); };
 
@@ -136,34 +137,34 @@ optional<ref_t<AST::Expr>> BottomUp::operator()(ref_t<AST::Expr> expr) {
 
 // TopDown(S) = Sequence(S, All(TopDown(S)))
 
-optional<ref_t<AST::Expr>> TopDown::operator()(ref_t<AST::Expr> expr) {
+optional<ref_t<AST::Expr>> TopDown::operator()(ref_t<AST::Expr> const& expr) {
   // cerr << "TOPDOWN" << std::endl;
   auto self = [this](ref_t<AST::Expr> arg) { return (*this)(arg); };
   return Sequence(s, All(self))(expr);
 }
 
 // OnceBottomUp(S) = Choice(One(OnceBottomUp(S)), S)
-optional<ref_t<AST::Expr>> OnceBottomUp::operator()(ref_t<AST::Expr> expr) {
+optional<ref_t<AST::Expr>> OnceBottomUp::operator()(ref_t<AST::Expr> const& expr) {
   // cerr << "ONE_BOTTOM_UP" << std::endl;
   auto self = [this](ref_t<AST::Expr> arg) { return (*this)(arg); };
   return Choice(One(self), s)(expr);
 }
 
 //  OnceTopDown(S)  = Choice(S, One(OnceTopDown(S)))
-optional<ref_t<AST::Expr>> OnceTopDown::operator()(ref_t<AST::Expr> expr) {
+optional<ref_t<AST::Expr>> OnceTopDown::operator()(ref_t<AST::Expr> const& expr) {
   // cerr << "ONCE_TOP_DOWN" << std::endl;
   auto self = [this](ref_t<AST::Expr> arg) { return (*this)(arg); };
   return Choice(s, One(self))(expr);
 }
 
-optional<ref_t<AST::Expr>> Innermost::operator()(ref_t<AST::Expr> expr) {
+optional<ref_t<AST::Expr>> Innermost::operator()(ref_t<AST::Expr> const& expr) {
   // cerr << "INNER MOST" << std::endl;
-  return Repeat(OnceBottomUp(s))(expr);
+  return Repeat(OnceBottomUp{s})(expr);
 }
 
-optional<ref_t<AST::Expr>> Outermost::operator()(ref_t<AST::Expr> expr) {
+optional<ref_t<AST::Expr>> Outermost::operator()(ref_t<AST::Expr> const& expr) {
   // cerr << "OUTTER_MOST" << std::endl;
-  return Repeat(OnceTopDown(s))(expr);
+  return Repeat(OnceTopDown{s})(expr);
 }
 
 } // end Namespace
