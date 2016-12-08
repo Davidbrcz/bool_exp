@@ -37,7 +37,7 @@ struct Sequence : private TwoArgStep {
 struct Choice : private TwoArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr) const;
   using TwoArgStep::TwoArgStep;
-  Choice(std::string s,Strat s1,Strat s2);
+  Choice(std::string s, Strat s1, Strat s2);
   std::string msg;
 };
 
@@ -54,7 +54,7 @@ struct Try : private OneArgStep {
 // Try(Sequence(S, Repeat(S)))
 struct Repeat : private OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
-  using OneArgStep::OneArgStep;
+  Repeat(Strat ss);
 };
 
 struct All : private OneArgStep {
@@ -80,19 +80,15 @@ struct TopDown : private OneArgStep {
 };
 
 // OnceBottomUp(S) = Choice(One(OnceBottomUp(S)), S)
-  struct OnceBottomUp //: private OneArgStep
-{
-  Strat s;
+struct OnceBottomUp : private OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
-  //  using OneArgStep::OneArgStep;
+  using OneArgStep::OneArgStep;
 };
 
 //  OnceTopDown(S)  = Choice(S, One(OnceTopDown(S)))
-  struct OnceTopDown //: private OneArgStep
-{
-  Strat s;
+struct OnceTopDown : private OneArgStep {
   optional<ref_t<AST::Expr>> operator()(ref_t<AST::Expr> const &expr);
-  //using OneArgStep::OneArgStep;
+  using OneArgStep::OneArgStep;
 };
 
 // Innermost(S) = Repeat(OnceBottomUp(S))

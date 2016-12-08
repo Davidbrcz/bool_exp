@@ -62,6 +62,7 @@ optional<ref_t<AST::Expr>> Try::operator()(ref_t<AST::Expr> const& expr) {
   return Choice(s, &Identity)(expr);
 }
 
+  Repeat::Repeat(Strat ss):OneArgStep(ss){}
 // Try(Sequence(S, Repeat(S)))
 optional<ref_t<AST::Expr>> Repeat::operator()(ref_t<AST::Expr> const& expr) {
   // cerr << "REPEAT" << std::endl;
